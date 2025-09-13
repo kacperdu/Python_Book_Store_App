@@ -1,0 +1,10 @@
+The Great Gatsby, F. ScoJ Fitzgerald, 10, 0
+To Kill a Mockingbird, Harper Lee, 15, 0
+Pride and Prejudice, Jane Austen, 12, 0
+The Witcher, Andrzej Sapkowski, 16, 0
+BFG, Roald Dahl, 12, 0
+Handmaids Tale, Margaret Atwood, 10, 0
+Philadelphia Here I come, Brian Friel, 10, 0
+Game of thrones, George R. R. Martin, 18, 0
+Dune, Frank Herbert, 14, 0
+3 Body Problem, Lio Civin, 17, 0
