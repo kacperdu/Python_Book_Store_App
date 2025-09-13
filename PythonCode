@@ -1,0 +1,206 @@
+from Project import my_library
+from datetime import date
+
+
+def borrow_book():
+    user_name = my_library.get_1_to_20_length_word("Enter your username: ")
+    member_num = my_library.numeric_and_6_dig("Enter your membership number: ")
+    book_tiles = []
+    with open("book_inventory.txt", "r") as connection:
+        for line in connection:
+            line = line.strip()
+            line_list = line.split(",")
+            book_tiles.append(line_list[0])
+    books_borrowed = 0
+    while books_borrowed <= 3:
+        book_borrow = input("Enter a book you want borrowed: ")
+        if book_borrow in book_tiles:
+            books_borrowed = books_borrowed + 1
+            current_date = date.today()
+            with open("Borrowed_Books.txt", "a") as connection:
+                connection.write(f"{user_name},{member_num},{book_borrow},{current_date}\n")
+        else:
+            print("That book is unavailable, please try again: ")
+
+
+def review_book():
+    with open("Borrowed_Books.txt", "r") as connection:
+        for line in connection:
+            line = line.strip()
+            line_list = line.split(",")
+            borrow_date = line_list[3]
+            due_date = borrow_date
+            print(f"Book title: {line_list[2]}, Due date:{due_date}")
+    choice1 = input("Is there a specific member's books you want to view? y/n: ")
+    if choice1 == "y":
+        members_num = input("Please enter that member's number: ")
+        with open("Borrowed_Books.txt", "r") as connection:
+            for line in connection:
+                line = line.strip()
+                line_list = line.split(",")
+                if members_num == line_list[1]:
+                    print(line)
+
+
+def manage_inventory(book_inv):
+    with open("book_inventory.txt", "r") as connection:
+        for line in connection:
+            line = line.strip()
+            print(line)
+    print("\na) Add new book\n"
+          "b) Remove a book from the inventory\n"
+          "c) Update the total copies available or copies borrowed for a book\n"
+          "d) Return to the main menu\n")
+    inv_choice = input("Pick one of the options: ")
+    looper = 0
+    while looper < 1:
+        if inv_choice == "a":
+            new_title = input("\nEnter the book's title: ")
+            new_author = input("Enter the book's author: ")
+            new_copies = input("Enter the book's copies available: ")
+            new_borrows = input("Enter the book's existing borrows: ")
+            with open("book_inventory.txt", "a") as connection:
+                connection.write(f"\n{new_title},{new_author},{new_copies},{new_borrows}")
+            looper = looper + 1
+        elif inv_choice == "b":
+            for i, line_list in enumerate(book_inv):
+                print(i, line_list)
+            chosen_delete = int(input("Choose which number line you would want deleted: "))
+            for i, line_list in enumerate(book_inv):
+                if i == chosen_delete:
+                    if chosen_delete <= len(book_inv):
+                        del book_inv[i]
+                        with open("book_inventory.txt", "w") as connection:
+                            for line in book_inv:
+                                connection.write(",".join(line) + "\n")
+                        looper = looper + 1
+                    else:
+                        print(f"That number is out of the inventory range of 0 - {len(book_inv)}")
+        elif inv_choice == "c":
+            for i, line_list in enumerate(book_inv):
+                print(i, line_list)
+            either_cop_av_or_bor = input("Would you like to update copies available or copies borrowed? "
+                                         "a=copy/b=borrow: ")
+            if either_cop_av_or_bor == "a":
+                chosen_copy = int(input("Choose which number line you would want replace the copies with: "))
+                for i, line_list in enumerate(book_inv):
+                    if i == chosen_copy:
+                        if chosen_copy <= len(book_inv):
+                            amount_copies = input("Amount of copies to replace: ")
+                            line_list[2] = amount_copies
+                            with open("book_inventory.txt", "w") as connection:
+                                for line in book_inv:
+                                    connection.write(" ,".join(line) + "\n")
+                        else:
+                            print(f"That number is out of the inventory range of 0 - {len(book_inv)}")
+                looper = looper + 1
+            elif either_cop_av_or_bor == "b":
+                chosen_borrow = int(input("Choose which number line you would want replace the borrows with: "))
+                for i, line_list in enumerate(book_inv):
+                    if i == chosen_borrow:
+                        if chosen_borrow <= len(book_inv):
+                            amount_borrows = input("Amount of borrows to replace: ")
+                            line_list[3] = amount_borrows
+                            with open("book_inventory.txt", "w") as connection:
+                                for line in book_inv:
+                                    connection.write(" ,".join(line) + "\n")
+                        else:
+                            print(f"That number is out of the inventory range of 0 - {len(book_inv)}")
+                looper = looper + 1
+            else:
+                print("That wasn't an option, please enter again")
+        else:
+            print("Incorrect, please choose an option")
+
+
+def return_book(borrow_inv, book_inv):
+    loop_more = 0
+    while loop_more < 1:
+        returner_name = my_library.get_1_to_20_length_word("Enter your user name: ")
+        users = []
+        with open("Borrowed_Books.txt", "r") as connection:
+            for line in connection:
+                line = line.strip()
+                line_list = line.split(",")
+                users.append(line_list[0])
+        if returner_name in users:
+            returner_num = my_library.numeric_and_6_dig("Enter you membership number: ")
+            member_nums = []
+            with open("Borrowed_Books.txt", "r") as connector:
+                for line in connector:
+                    line = line.strip()
+                    line_list = line.split(",")
+                    member_nums.append(line_list[1])
+            if returner_num in member_nums:
+                for i, line_liner in enumerate(borrow_inv):
+                    if returner_name == line_liner[0]:
+                        print(i, line_liner)
+                book_num_return = int(input("Enter the numbered entry you want returned: "))
+                for i, line_line in enumerate(borrow_inv):
+                    if i == book_num_return:
+                        if book_num_return <= len(borrow_inv):
+                            book_returned = i[2]
+                            print(book_returned)
+                            del borrow_inv[i]
+                            with open("Borrowed_Books.txt", "w") as connective:
+                                for line in borrow_inv:
+                                    connective.write(",".join(line) + "\n")
+                            print("Book has been successfully returned")
+                            for original, line_list in enumerate(book_inv):
+                                line_list[2] = book_num_return
+                                with open("book_inventory.txt", "w") as connect:
+                                    for line in book_inv:
+                                        connect.write(" ,".join(line) + "\n")
+                                loop_more = loop_more + 1
+                        else:
+                            print(f"That number is out of the inventory range of 0 - {len(borrow_inv)}")
+            else:
+                print("Your membership number is incorrect, please try again\n")
+        else:
+            print("Your username is incorrect, please try again\n")
+
+
+def main():
+    book_inv = []
+    with open("book_inventory.txt", "r") as connection:
+        for line in connection:
+            line = line.strip()
+            line = line.split(",")
+            book_inv.append(line)
+
+    borrow_inv = []
+    with open("Borrowed_Books.txt", "r") as connector:
+        for line in connector:
+            line = line.strip()
+            line = line.split(",")
+            borrow_inv.append(line)
+
+    looping = 0
+    while looping < 1:
+        print("\na) Borrow a Book\n"
+              "b) Review Borrowed Books\n"
+              "c) Manage Inventory\n"
+              "d) Return Book\n"
+              "e) Exit\n")
+        option_choice = input("Pick one of the following options: ")
+        if option_choice == "a":
+            borrow_book()
+        elif option_choice == "b":
+            review_book()
+        elif option_choice == "c":
+            key = input("Input admin key: ")
+            print("\n")
+            if key == "abadaba":
+                manage_inventory(book_inv)
+            else:
+                print("Incorrect key, try again")
+        elif option_choice == "d":
+            return_book(borrow_inv, book_inv)
+        elif option_choice == "e":
+            print("You have exited the program")
+            looping = looping + 1
+        else:
+            print("Incorrect option, try again")
+
+
+main()
